@@ -1,0 +1,34 @@
+{
+  "data": [
+    {
+      "broadcaster_user": {
+        "id": 123,
+        "profile_picture": "https://example.com/profile.jpg",
+        "username": "streamer_123"
+      },
+      "category": {
+        "id": 456,
+        "name": "Old School Runescape",
+        "thumbnail": "https://example.com/category.jpg"
+      },
+      "channel": {
+        "slug": "streamer-123"
+      },
+      "has_mature_content": true,
+      "id": "123e4567-e89b-12d3-a456-426614174000",
+      "language_code": "en",
+      "started_at": "2022-01-15T03:00:00Z",
+      "tags": [
+        "tag1",
+        "tag2"
+      ],
+      "thumbnail": "https://example.com/thumbnail.jpg",
+      "title": "My Stream Title",
+      "viewer_count": 100
+    }
+  ],
+  "message": "success",
+  "pagination": {
+    "next_cursor": "cursor_abc123"
+  }
+}

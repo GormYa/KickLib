@@ -10,6 +10,7 @@ using KickLib.Models.v1.Chat;
 using KickLib.Models.v1.EventSubscriptions;
 using KickLib.Models.v1.Livestreams;
 using KickLib.Models.v1.Users;
+using LivestreamResponseV2 = KickLib.Models.v2.Livestreams.LivestreamResponse;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
@@ -126,6 +127,65 @@ public class ApiResponseTests : BaseKickLibTests
         ((LivestreamResponse)deserializedObject).ProfilePicture.Should().Be("https://kick.com/img/default-profile-pictures/default2.jpeg");
     }
     
+    [Theory]
+    [InlineData("GetLivestreamsV2Response", typeof(LivestreamResponseV2))]
+    public void CorrectlyDeserialize_LivestreamV2Responses(string payloadResource, Type targetType)
+    {
+        var payload = GetPayload(payloadResource);
+
+        var deserializedObject = JsonConvert.DeserializeObject(payload, targetType, SerializerSettings);
+
+        deserializedObject.Should().NotBeNull();
+        deserializedObject.Should().BeOfType(targetType);
+        var response = (LivestreamResponseV2)deserializedObject!;
+        response.Id.Should().Be("123e4567-e89b-12d3-a456-426614174000");
+        response.Title.Should().Be("My Stream Title");
+        response.LanguageCode.Should().Be("en");
+        response.ViewerCount.Should().Be(100);
+        response.HasMatureContent.Should().BeTrue();
+        response.Tags.Should().HaveCount(2);
+        response.BroadcasterUser.Should().NotBeNull();
+        response.BroadcasterUser.Id.Should().Be(123);
+        response.BroadcasterUser.Username.Should().Be("streamer_123");
+        response.BroadcasterUser.ProfilePicture.Should().Be("https://example.com/profile.jpg");
+        response.Channel.Should().NotBeNull();
+        response.Channel.Slug.Should().Be("streamer-123");
+        response.Category.Should().NotBeNull();
+        response.Category.Name.Should().Be("Old School Runescape");
+    }
+
+    [Fact]
+    public void CorrectlyDeserialize_LivestreamsV2PaginatedResponse()
+    {
+        var payload = GetPayload("GetLivestreamsV2PaginatedResponse");
+
+        var deserializedObject = JsonConvert.DeserializeObject<DataWrapper<ICollection<LivestreamResponseV2>>>(payload, SerializerSettings)!;
+
+        deserializedObject.Should().NotBeNull();
+        deserializedObject.Data.Should().NotBeNull();
+        deserializedObject.Data!.Should().HaveCount(1);
+        deserializedObject.Pagination.Should().NotBeNull();
+        deserializedObject.Pagination!.NextCursor.Should().Be("cursor_abc123");
+    }
+
+    [Fact]
+    public void CorrectlyDeserialize_LivestreamsByUserIdsResponse()
+    {
+        var payload = GetPayload("GetLivestreamsByUserIdsResponse");
+
+        var deserializedObject = JsonConvert.DeserializeObject<DataWrapper<ICollection<LivestreamResponseV2>>>(payload, SerializerSettings)!;
+
+        deserializedObject.Should().NotBeNull();
+        deserializedObject.Data.Should().NotBeNull();
+        deserializedObject.Data!.Should().HaveCount(1);
+        deserializedObject.Pagination.Should().BeNull();
+
+        var response = deserializedObject.Data!.First();
+        response.BroadcasterUser.Id.Should().Be(123);
+        response.BroadcasterUser.Username.Should().Be("streamer_123");
+        response.Title.Should().Be("My Stream Title");
+    }
+
     [Theory]
     [InlineData("GetUsersResponse", typeof(UserResponse))]
     public void CorrectlyDeserialize_UsersResponses(string payloadResource, Type targetType)
