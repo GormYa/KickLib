@@ -41,6 +41,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddScoped<ILivestreams, KickLib.Api.Livestreams>()
                 .AddScoped<IModeration, KickLib.Api.Moderation>()
                 .AddScoped<IUsers, KickLib.Api.Users>()
+                .AddScoped<IRawApi, KickLib.Api.RawApi>()
                 .AddSingleton<IKickOAuthGenerator, KickOAuthGenerator>();
         }
     }

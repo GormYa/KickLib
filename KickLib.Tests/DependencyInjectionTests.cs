@@ -40,9 +40,11 @@ public class DependencyInjectionTests
         kickApi.Categories.Should().NotBeNull();
         kickApi.Channels.Should().NotBeNull();
         kickApi.Chat.Should().NotBeNull();
+        kickApi.Drops.Should().NotBeNull();
         kickApi.EventSubscriptions.Should().NotBeNull();
         kickApi.Livestreams.Should().NotBeNull();
         kickApi.Users.Should().NotBeNull();
+        kickApi.Raw.Should().NotBeNull();
     }
     
     private static IServiceProvider CreateProvider()

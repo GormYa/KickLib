@@ -32,6 +32,11 @@
       <EmbeddedResource Include="Data\ApiResponses\GetChannelRewardRedemptionsResponse.json" />
       <EmbeddedResource Include="Data\ApiResponses\GetChannelRewardResponse.json" />
       <EmbeddedResource Include="Data\ApiResponses\GetLivestreamResponse.json" />
+      <EmbeddedResource Include="Data\ApiResponses\GetLivestreamsV2Response.json" />
+      <EmbeddedResource Include="Data\ApiResponses\GetLivestreamsV2PaginatedResponse.json" />
+      <EmbeddedResource Include="Data\ApiResponses\GetLivestreamsByUserIdsResponse.json" />
+      <EmbeddedResource Include="Data\ApiResponses\GetClaimResponse.json" />
+      <EmbeddedResource Include="Data\ApiResponses\GetClaimsPaginatedResponse.json" />
       <EmbeddedResource Include="Data\ApiResponses\IntrospectTokenResponse_Inactive.json" />
       <EmbeddedResource Include="Data\WebhookPayloads\ChannelFollowedEventPayload.json" />
       <EmbeddedResource Include="Data\WebhookPayloads\ChannelGiftedSubscriptionEventPayload.json" />

@@ -64,7 +64,13 @@ public interface IKickApi
     ///     User APIs allow apps to interact with user information. Scopes will vary and sensitive data will be available to User Access Tokens with the required scopes.
     /// </summary>
     IUsers Users { get; }
-    
+
+    /// <summary>
+    ///     Escape hatch for calling Kick API endpoints that don't have a dedicated KickLib API surface yet,
+    ///     while still reusing KickLib's authentication, versioning, and error-handling plumbing.
+    /// </summary>
+    IRawApi Raw { get; }
+
     /// <summary>
     ///     The settings for the Kick API (like ClientId, Secrets, etc).
     /// </summary>

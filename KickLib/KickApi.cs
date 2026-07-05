@@ -43,7 +43,10 @@ public class KickApi : IKickApi
     
     /// <inheritdoc />
     public IUsers Users { get; }
-    
+
+    /// <inheritdoc />
+    public IRawApi Raw { get; }
+
     /// <inheritdoc />
     public ApiSettings ApiSettings { get; }
 
@@ -61,6 +64,7 @@ public class KickApi : IKickApi
     /// <param name="kicks">Kicks api implementation.</param>
     /// <param name="moderation">Moderation api implementation.</param>
     /// <param name="users">User api implementation.</param>
+    /// <param name="raw">Raw api implementation.</param>
     /// <param name="settings">API Settings. {(If null, default settings will be used}.</param>
     public KickApi(
         IAuthorization authorization,
@@ -74,6 +78,7 @@ public class KickApi : IKickApi
         IKicks kicks,
         IModeration moderation,
         IUsers users,
+        IRawApi raw,
         ApiSettings? settings = null)
     {
         ApiSettings = settings ?? ApiSettings.Default;
@@ -90,6 +95,7 @@ public class KickApi : IKickApi
         Kicks = kicks;
         Moderation = moderation;
         Users = users;
+        Raw = raw;
     }
 
     /// <summary>
@@ -119,6 +125,7 @@ public class KickApi : IKickApi
             new Kicks(apiSettings, oauthGenerator, httpClientFactory, loggerFactory.GetLogger<Kicks>()),
             new Moderation(apiSettings, oauthGenerator, httpClientFactory, loggerFactory.GetLogger<Moderation>()),
             new Users(apiSettings, oauthGenerator, httpClientFactory, loggerFactory.GetLogger<Users>()),
+            new RawApi(apiSettings, oauthGenerator, httpClientFactory, loggerFactory.GetLogger<RawApi>()),
             apiSettings);
     }
 }
