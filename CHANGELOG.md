@@ -4,6 +4,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.11.0](https://www.nuget.org/packages/KickLib/1.11.0) - [diff](https://github.com/Bukk94/KickLib/compare/v1.10.0...v1.11.0)
+### Added
+- Support for V2 Livestreams endpoint (`GET /public/v2/livestreams`) with cursor-based pagination
+- New `GetLivestreamsAsync(string? cursor, int? limit, ...)` overload for simple V2 browsing
+- New `GetLivestreamsAsync(GetLivestreamsRequest, ...)` overload for filtered V2 queries (category, language)
+- New `LivestreamResponseV2`, `LivestreamBroadcasterUser`, `LivestreamChannel`, and `GetLivestreamsRequest` models in `KickLib.Models.v1.Livestreams`
+- New `GetLivestreamsByUserIdsAsync(ICollection<long> userIds, ...)` for `GET /public/v1/users/livestreams` (active livestreams for up to 100 given user IDs)
+- New `IDrops` API (`GetClaimsAsync`/`UpdateClaimsAsync`) for `GET`/`PATCH /public/v1/drops/claims` - retrieving and updating Drops campaign reward claims. Requires an organization-scoped OAuth app access token.
+- New `IKickApi.Raw` escape hatch (`GetAsync`/`PostAsync`/`PatchAsync`/`DeleteAsync`) for calling Kick API endpoints that don't have a dedicated KickLib API surface yet, reusing the library's auth/versioning/pagination plumbing
+### Deprecated
+- `GetLivestreamsAsync(int? broadcasterId, ...)` - V1 endpoint is deprecated by Kick; use V2 cursor-based overloads instead
+- `GetLivestreamsAsync(ICollection<int> broadcasterIds, ...)` - V1 endpoint is deprecated by Kick; use V2 cursor-based overloads instead
+
 ## [1.10.0](https://www.nuget.org/packages/KickLib/1.10.0) - [diff](https://github.com/Bukk94/KickLib/compare/v1.9.0...v1.10.0)
 ### Added 
 - Support for Channel reward redemption endpoints
