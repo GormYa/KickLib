@@ -1,0 +1,18 @@
+{
+  "data": {
+    "claims": [
+      {
+        "claim_id": "claim_01HZ8X9K2M4N6P8Q0R2S4T6V8W",
+        "user_id": 123,
+        "campaign_id": "campaign_01HZ8X9K2M4N6P8Q0R2S4T6V8W",
+        "reward_id": "reward_01HZ8X9K2M4N6P8Q0R2S4T6V8W",
+        "external_id": "ext-reward-1",
+        "external_status": "fulfilled",
+        "created_at": "2026-01-15T03:00:00Z",
+        "updated_at": "2026-01-15T04:30:00Z"
+      }
+    ],
+    "cursor": "01K0TDDR08Q5ZNWXK92SDH7SDH"
+  },
+  "message": "OK"
+}

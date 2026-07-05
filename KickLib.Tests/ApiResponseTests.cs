@@ -7,10 +7,10 @@ using KickLib.Models.v1.ChannelRewards;
 using KickLib.Models.v1.ChannelRewards.Redemptions;
 using KickLib.Models.v1.Channels;
 using KickLib.Models.v1.Chat;
+using KickLib.Models.v1.Drops;
 using KickLib.Models.v1.EventSubscriptions;
 using KickLib.Models.v1.Livestreams;
 using KickLib.Models.v1.Users;
-using LivestreamResponseV2 = KickLib.Models.v2.Livestreams.LivestreamResponse;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
@@ -58,6 +58,38 @@ public class ApiResponseTests : BaseKickLibTests
         }
     }
     
+    [Theory]
+    [InlineData("GetClaimResponse", typeof(ClaimResponse))]
+    public void CorrectlyDeserialize_ClaimResponses(string payloadResource, Type targetType)
+    {
+        var payload = GetPayload(payloadResource);
+
+        var deserializedObject = JsonConvert.DeserializeObject(payload, targetType, SerializerSettings);
+
+        deserializedObject.Should().NotBeNull();
+        deserializedObject.Should().BeOfType(targetType);
+        var response = (ClaimResponse)deserializedObject!;
+        response.ClaimId.Should().Be("claim_01HZ8X9K2M4N6P8Q0R2S4T6V8W");
+        response.UserId.Should().Be(123);
+        response.CampaignId.Should().Be("campaign_01HZ8X9K2M4N6P8Q0R2S4T6V8W");
+        response.RewardId.Should().Be("reward_01HZ8X9K2M4N6P8Q0R2S4T6V8W");
+        response.ExternalId.Should().Be("ext-reward-1");
+        response.ExternalStatus.Should().Be("fulfilled");
+    }
+
+    [Fact]
+    public void CorrectlyDeserialize_ClaimsPaginatedResponse()
+    {
+        var payload = GetPayload("GetClaimsPaginatedResponse");
+
+        var deserializedObject = JsonConvert.DeserializeObject<DataWrapper<ClaimsPageResponse>>(payload, SerializerSettings)!;
+
+        deserializedObject.Should().NotBeNull();
+        deserializedObject.Data.Should().NotBeNull();
+        deserializedObject.Data!.Claims.Should().HaveCount(1);
+        deserializedObject.Data!.Cursor.Should().Be("01K0TDDR08Q5ZNWXK92SDH7SDH");
+    }
+
     [Theory]
     [InlineData("GetPublicKeyResponse", typeof(PublicKeyResponse))]
     [InlineData("IntrospectTokenResponse", typeof(TokenIntrospectResponse))]

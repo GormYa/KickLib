@@ -27,6 +27,9 @@ public class KickApi : IKickApi
     public IChannelRewards ChannelRewards { get; }
     
     /// <inheritdoc />
+    public IDrops Drops { get; }
+
+    /// <inheritdoc />
     public IEventSubscriptions EventSubscriptions { get; }
     
     /// <inheritdoc />
@@ -52,6 +55,7 @@ public class KickApi : IKickApi
     /// <param name="channels">Channel api implementation.</param>
     /// <param name="channelRewards">Channel Rewards api implementation.</param>
     /// <param name="chat">Chat api implementation.</param>
+    /// <param name="drops">Drops api implementation.</param>
     /// <param name="eventSubscriptions">Event subscription api implementation.</param>
     /// <param name="livestreams">Live stream api implementation.</param>
     /// <param name="kicks">Kicks api implementation.</param>
@@ -64,6 +68,7 @@ public class KickApi : IKickApi
         IChat chat,
         IChannels channels,
         IChannelRewards channelRewards,
+        IDrops drops,
         IEventSubscriptions eventSubscriptions,
         ILivestreams livestreams,
         IKicks kicks,
@@ -79,6 +84,7 @@ public class KickApi : IKickApi
         Chat = chat;
         Channels = channels;
         ChannelRewards = channelRewards;
+        Drops = drops;
         EventSubscriptions = eventSubscriptions;
         Livestreams = livestreams;
         Kicks = kicks;
@@ -107,6 +113,7 @@ public class KickApi : IKickApi
             new Chat(apiSettings, oauthGenerator, httpClientFactory, loggerFactory.GetLogger<Chat>()),
             new Channels(apiSettings, oauthGenerator, httpClientFactory, loggerFactory.GetLogger<Channels>()),
             new ChannelRewards(apiSettings, oauthGenerator, httpClientFactory, loggerFactory.GetLogger<ChannelRewards>()),
+            new Drops(apiSettings, oauthGenerator, httpClientFactory, loggerFactory.GetLogger<Drops>()),
             new EventSubscriptions(apiSettings, oauthGenerator, httpClientFactory, loggerFactory.GetLogger<EventSubscriptions>()),
             new Livestreams(apiSettings, oauthGenerator, httpClientFactory, loggerFactory.GetLogger<Livestreams>()),
             new Kicks(apiSettings, oauthGenerator, httpClientFactory, loggerFactory.GetLogger<Kicks>()),

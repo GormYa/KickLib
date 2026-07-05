@@ -33,6 +33,11 @@ public interface IKickApi
     IChannelRewards ChannelRewards { get; }
     
     /// <summary>
+    ///     Drops APIs allow an app associated with an organization to retrieve and update Drops campaign reward claims.
+    /// </summary>
+    IDrops Drops { get; }
+
+    /// <summary>
     ///     [WEBHOOKS] Event Subscriptions APIs allow you to subscribe to events on Kick e.g. chat messages, follows, subscriptions.
     ///     Those events are then sent to a webhook URL that you provide.
     /// </summary>
