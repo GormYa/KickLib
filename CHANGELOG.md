@@ -4,6 +4,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.12.0](https://www.nuget.org/packages/KickLib/1.12.0) - [diff](https://github.com/Bukk94/KickLib/compare/v1.11.0...v1.12.0)
+# Changed
+- Changed endpoint for unofficial Videos endpoint, now requiring `ChannelId` to get a video
+
 ## [1.11.0](https://www.nuget.org/packages/KickLib/1.11.0) - [diff](https://github.com/Bukk94/KickLib/compare/v1.10.0...v1.11.0)
 ### Added
 - Support for V2 Livestreams endpoint (`GET /public/v2/livestreams`) with cursor-based pagination
