@@ -147,6 +147,7 @@ namespace KickLib.Api.Unofficial.Core
             {
                 ApiVersion.None => $"{Constants.KickUrl}/{urlPart}",
                 ApiVersion.V1Internal => $"{Constants.KickUrl}/api/internal/v1/{urlPart}",
+                ApiVersion.WebV1 => $"{Constants.KickWebApiUrl}/api/v1/{urlPart}",
                 _ => $"{BaseUrl}{(int)version}/{urlPart}"
             };
 

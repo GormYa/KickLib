@@ -44,7 +44,7 @@ namespace KickLib.Api.Unofficial.Clients
                     {
                         context.TryGetValue("url", out var url);
                         // Log retry information for debugging
-                        _logger.LogInformation("Retry attempt {RetryCount} for URL: {Value}", retryCount, url);
+                        _logger?.LogInformation("Retry attempt {RetryCount} for URL: {Value}", retryCount, url);
                     });
         }
 
