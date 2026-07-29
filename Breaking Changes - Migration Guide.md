@@ -4,12 +4,18 @@ This document provides a guide for migrating from one (major/minor) version of t
 
 ## Table of Contents
 
+- [1.12.0 -> 1.13.0](#1120---1130)
 - [1.9.0 -> 1.10.0](#190---1100)
 - [1.6.x -> 1.7.0](#16x---170)
 - [1.2.0 -> 1.3.0](#12x---130)
 - [1.1.1 -> 1.2.0](#111---120)
 - [0.2.0 -> 1.0.0](#020---100)
 - [0.1.x -> 0.2.0](#01x---020)
+
+## 1.12.0 -> 1.13.0
+
+* Extended unofficial API `IApiCaller` interface with new method `SendRequestAsync` that allows sending requests without authentication.
+  * If you have custom implementation, you need to update it accordingly.
 
 ## 1.9.0 -> 1.10.0
 
