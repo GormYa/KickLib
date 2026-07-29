@@ -32,7 +32,8 @@ namespace KickLib.Api.Unofficial.Clients.CycleTls
                     { "Accept", "application/json" },
                     { "Accept-Encoding", "gzip, deflate, br, zstd" },
                     { "Accept-Language", "en,cs;q=0.9" },
-                    { "Content-Type", "application/json" }
+                    { "Content-Type", "application/json" },
+                    { "Referer", Constants.KickUrl }
                 },
                 DisableRedirect = false
             };

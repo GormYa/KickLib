@@ -18,6 +18,9 @@ namespace KickLib.Api.Unofficial.Clients.CycleTls
 
         /// <inheritdoc />
         public string XsrfToken { get; private set; }
+        
+        /// <inheritdoc />
+        public string KickSession { get; private set; }
 
         /// <inheritdoc />
         public bool IsAuthenticated => BearerToken is not null;
@@ -32,8 +35,8 @@ namespace KickLib.Api.Unofficial.Clients.CycleTls
         {
             _logger?.LogInformation("Starting authentication process. This might take a while...");
 
-            var xsrfToken = await GetXsrfTokenAsync().ConfigureAwait(false);
-            XsrfToken = xsrfToken;
+            var tokens = await GetTokensAsync().ConfigureAwait(false);
+            XsrfToken = tokens.Xsrf;
 
             if (authenticationSettings.HasTokenOverride)
             {
@@ -69,7 +72,7 @@ namespace KickLib.Api.Unofficial.Clients.CycleTls
             var loginOptions = CycleTlsInitializer.GetOptions("https://kick.com/mobile/login");
             loginOptions.Method = "POST";
             loginOptions.Body = loginPayload;
-            loginOptions.Headers.Add("X-Xsrf-Token", xsrfToken);
+            loginOptions.Headers.Add("X-Xsrf-Token", tokens.Xsrf);
             var loginResponseData = await CycleTlsInitializer.Client.SendAsync(loginOptions).ConfigureAwait(false);
 
             var loginResponse = loginResponseData.Body;
@@ -105,20 +108,17 @@ namespace KickLib.Api.Unofficial.Clients.CycleTls
 
         public async Task RefreshXsrfTokenAsync<TPage>(TPage targetPage)
         {
-            if (targetPage is null)
-            {
-                throw new ArgumentNullException(nameof(targetPage));
-            }
-
-            XsrfToken = await GetXsrfTokenAsync().ConfigureAwait(false);
+            var tokens = await GetTokensAsync().ConfigureAwait(false);
+            XsrfToken = tokens.Xsrf;
+            KickSession = tokens.SessionId;
         }
 
-        private async Task<string> GetXsrfTokenAsync()
+        private async Task<(string Xsrf, string? SessionId)> GetTokensAsync()
         {
             var options = CycleTlsInitializer.GetOptions(Constants.CsrfUrl);
             var xsrfTokenResponse = await CycleTlsInitializer.Client.SendAsync(options).ConfigureAwait(false);
 
-            if (xsrfTokenResponse.Status != 200)
+            if (xsrfTokenResponse.Status != 200 &&  xsrfTokenResponse.Status != 204)
             {
                 throw new ArgumentException("Failed to retrieve XSRF Token");
             }
@@ -130,7 +130,12 @@ namespace KickLib.Api.Unofficial.Clients.CycleTls
                 throw new ArgumentException("Failed to retrieve XSRF Token");
             }
 
-            return HttpUtility.UrlDecode(match.Groups["token"].Value);
+            var sessionMatch = Regex.Match(xsrfTokenResponse.Headers["Set-Cookie"], "kick_session=(?<session>[^;]*)");
+
+            return (
+                HttpUtility.UrlDecode(match.Groups["token"].Value),
+                HttpUtility.UrlDecode(sessionMatch.Groups["session"]?.Value)
+            );
         }
 
         private static string GenerateTotp(string twoFaAuthCode)

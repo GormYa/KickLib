@@ -1,3 +1,4 @@
+using System.Net;
 using KickLib.Api.Unofficial.Clients.CycleTls;
 using KickLib.Api.Unofficial.Exceptions;
 using KickLib.Api.Unofficial.Interfaces;
@@ -33,6 +34,17 @@ namespace KickLib.Api.Unofficial.Clients
         {
             return _authenticationService.AuthenticateAsync(authenticationSettings);
         }
+        
+        /// <inheritdoc />
+        public Task RefreshTokensAsync(bool skipIfExists)
+        {
+            if (!string.IsNullOrWhiteSpace(_authenticationService.XsrfToken) && skipIfExists)
+            {
+                return Task.CompletedTask;
+            }
+            
+            return _authenticationService.RefreshXsrfTokenAsync<object>(null);
+        }
 
         /// <inheritdoc />
         public async Task<KeyValuePair<int, string>> SendRequestAsync(string url)
@@ -40,6 +52,42 @@ namespace KickLib.Api.Unofficial.Clients
             try
             {
                 var options = CycleTlsInitializer.GetOptions(url);
+                if (!string.IsNullOrWhiteSpace(_authenticationService.KickSession))
+                {
+                    options.Cookies ??= [];
+                    options.Cookies.Add(new Cookie("kick_session", _authenticationService.KickSession));
+                }
+                
+                var response = await CycleTlsInitializer.Client.SendAsync(options).ConfigureAwait(false);
+
+                return new KeyValuePair<int, string>(response.Status, response.Body);
+            }
+            catch (Exception ex)
+            {
+                throw new KickLibException("KickLib failed to get response from Kick.com. See inner exception for details.", ex);
+            }
+        }
+        
+        /// <inheritdoc />
+        public async Task<KeyValuePair<int, string>> SendRequestAsync(
+            string url, 
+            string payload, 
+            HttpMethod? method = null)
+        {
+            try
+            {
+                var options = CycleTlsInitializer.GetOptions(url);
+                if (!string.IsNullOrWhiteSpace(_authenticationService.KickSession))
+                {
+                    options.Cookies ??= [];
+                    options.Cookies.Add(new Cookie("kick_session", _authenticationService.KickSession));
+                }
+                
+                var requestMethod = method?.ToString() ?? (payload is not null ? "POST" : "GET");
+
+                options.Method = requestMethod;
+                options.Body = payload;
+                
                 var response = await CycleTlsInitializer.Client.SendAsync(options).ConfigureAwait(false);
 
                 return new KeyValuePair<int, string>(response.Status, response.Body);

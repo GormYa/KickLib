@@ -98,6 +98,30 @@ namespace KickLib.Api.Unofficial.Core
         
             return JsonConvert.DeserializeObject<TType>(data.Value, _serializerSettings);
         }
+        
+        protected async Task<TType?> PostAsync<TType>(
+            string urlPart,
+            ApiVersion version,
+            object payload)
+        {
+            if (payload is null)
+            {
+                throw new ArgumentNullException(nameof(payload));
+            }
+        
+            var url = ConstructResourceUrl(urlPart, version);
+            var payloadJson = JsonConvert.SerializeObject(payload);
+
+            var data = await _client.SendRequestAsync(url, payloadJson);
+            if (data.Key != 200 && 
+                data.Key != 204)
+            {
+                HandleErrorThrowIfCritical(data.Key);
+                return default;
+            }
+        
+            return JsonConvert.DeserializeObject<TType>(data.Value, _serializerSettings);
+        }
     
         protected async Task<TType?> PostAuthenticatedAsync<TType>(
             string urlPart,
@@ -146,6 +170,7 @@ namespace KickLib.Api.Unofficial.Core
             var url = version switch
             {
                 ApiVersion.None => $"{Constants.KickUrl}/{urlPart}",
+                ApiVersion.Plain => urlPart,
                 ApiVersion.V1Internal => $"{Constants.KickUrl}/api/internal/v1/{urlPart}",
                 ApiVersion.WebV1 => $"{Constants.KickWebApiUrl}/api/v1/{urlPart}",
                 _ => $"{BaseUrl}{(int)version}/{urlPart}"

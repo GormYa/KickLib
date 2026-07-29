@@ -203,11 +203,12 @@ namespace KickLib.Api.Unofficial.Api
             var response = await GetAsync<DataWrapper<PollResponse>>(urlPart, ApiVersion.V2).ConfigureAwait(false);
             return response?.Data;
         }
-    
+
         /// <summary>
         ///     Gets channel videos.
         /// </summary>
         /// <param name="channelSlug">Channel slug.</param>
+        [Obsolete("This method may not work anymore, use GetChannelVideosAsync(int channelId) instead.")]
         public Task<ICollection<VideoResponse>> GetChannelVideosAsync(string channelSlug)
         {
             if (string.IsNullOrWhiteSpace(channelSlug))

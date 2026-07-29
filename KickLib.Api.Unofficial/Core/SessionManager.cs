@@ -37,6 +37,7 @@ namespace KickLib.Api.Unofficial.Core
                 session.LastAccessedAt = DateTime.UtcNow;
                 return session;
             }
+            
             return null;
         }
 
@@ -46,10 +47,12 @@ namespace KickLib.Api.Unofficial.Core
             {
                 session.BearerToken = bearerToken;
                 session.XsrfToken = xsrfToken;
+                session.KickSession = null;
                 session.IsAuthenticated = !string.IsNullOrEmpty(bearerToken);
                 session.LastAccessedAt = DateTime.UtcNow;
                 return true;
             }
+            
             return false;
         }
 
@@ -86,6 +89,7 @@ namespace KickLib.Api.Unofficial.Core
         public string SessionId { get; set; }
         public string BearerToken { get; set; }
         public string XsrfToken { get; set; }
+        public string KickSession { get; set; }
         public bool IsAuthenticated { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime LastAccessedAt { get; set; }

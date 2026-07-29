@@ -22,6 +22,7 @@ namespace KickLib.Api.Unofficial.Clients.Puppeteer
 
         public string BearerToken => _sessionManager.GetSession(_sessionId)?.BearerToken;
         public string XsrfToken => _sessionManager.GetSession(_sessionId)?.XsrfToken;
+        public string KickSession => _sessionManager.GetSession(_sessionId)?.KickSession;
         public bool IsAuthenticated => _sessionManager.GetSession(_sessionId)?.IsAuthenticated ?? false;
 
         public OptimizedPuppeteerAuthenticationService(

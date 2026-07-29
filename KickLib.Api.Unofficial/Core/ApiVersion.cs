@@ -8,6 +8,7 @@
         V1Internal,
         WebV1,
         // Some endpoints don't have /v1/ in the path
-        None
+        None,
+        Plain
     }
 }

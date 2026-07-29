@@ -15,11 +15,25 @@ namespace KickLib.Api.Unofficial.Clients
         /// <inheritdoc />
         public Task<KeyValuePair<int, string>> SendRequestAsync(string url)
         {
-            return SendRequestAsync(url, "GET");
+            return SendRequestAsync(url, "GET", payload: null);
         }
 
         /// <inheritdoc />
         public Task AuthenticateAsync(AuthenticationSettings authenticationSettings)
+        {
+            throw new NotImplementedException();
+        }
+        
+        /// <inheritdoc />
+        public Task RefreshTokensAsync(bool skipIfExists)
+        {
+            throw new NotImplementedException();
+        }
+        
+        public Task<KeyValuePair<int, string>> SendRequestAsync(
+            string url,
+            string payload,
+            HttpMethod? method = null)
         {
             throw new NotImplementedException();
         }

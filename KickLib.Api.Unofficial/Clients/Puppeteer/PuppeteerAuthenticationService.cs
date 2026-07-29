@@ -23,6 +23,9 @@ namespace KickLib.Api.Unofficial.Clients.Puppeteer
         public string XsrfToken { get; private set; }
 
         /// <inheritdoc />
+        public string KickSession { get; private set; }
+        
+        /// <inheritdoc />
         public bool IsAuthenticated => BearerToken is not null;
 
         public PuppeteerAuthenticationService(BrowserSettings browserSettings, ILogger logger = null)

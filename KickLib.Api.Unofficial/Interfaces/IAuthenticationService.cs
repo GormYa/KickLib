@@ -6,6 +6,7 @@ namespace KickLib.Api.Unofficial.Interfaces
     {
         string BearerToken { get; }
         string XsrfToken { get; }
+        string KickSession { get; }
         public bool IsAuthenticated { get; }
 
         public Task AuthenticateAsync(AuthenticationSettings authenticationSettings);

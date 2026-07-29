@@ -39,6 +39,18 @@ namespace KickLib.Api.Unofficial.Clients
         {
             return _authenticationService.AuthenticateAsync(authenticationSettings);
         }
+        
+        /// <inheritdoc />
+        public async Task RefreshTokensAsync(bool skipIfExists)
+        {
+            if (!string.IsNullOrWhiteSpace(_authenticationService.XsrfToken) && skipIfExists)
+            {
+                return;
+            }
+            
+            var page = await _browserManager.GetOrCreateSessionPageAsync(_sessionId);
+            await _authenticationService.RefreshXsrfTokenAsync(page);
+        }
 
         /// <inheritdoc />
         public async Task<KeyValuePair<int, string>> SendRequestAsync(string url)
@@ -128,6 +140,78 @@ namespace KickLib.Api.Unofficial.Clients
             catch (Exception ex)
             {
                 _logger?.LogError(ex, "Error sending request to {Url} for session {SessionId}", url, _sessionId);
+                return GetErrorResponse(ex.Message);
+            }
+        }
+
+        public async Task<KeyValuePair<int, string>> SendRequestAsync(
+            string url,
+            string payload,
+            HttpMethod? method = null)
+        {
+            var session = _sessionManager.GetSession(_sessionId);
+            method ??= HttpMethod.Post;
+            if (session == null)
+            {
+                throw new InvalidOperationException($"Session {_sessionId} not found");
+            }
+
+            if (!session.IsAuthenticated)
+            {
+                throw new UnauthorizedAccessException("Session is not authenticated");
+            }
+
+            try
+            {
+                var headers = new Dictionary<string, string>
+                {
+                    ["Accept"] = "application/json",
+                    ["Content-Type"] = "application/json",
+                    ["User-Agent"] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+                    ["X-Xsrf-Token"] = session.XsrfToken
+                };
+
+                var response = await _browserManager.ExecuteFetchRequestAsync(
+                    _sessionId,
+                    url,
+                    method.ToString(),
+                    payload,
+                    headers
+                );
+
+                var result = Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(response);
+                var statusCode = (int)result.status;
+                var body = result.body?.ToString() ?? "";
+
+                if (statusCode == 419) // CSRF token mismatch
+                {
+                    _logger?.LogWarning("CSRF token mismatch for session {SessionId}, attempting to refresh token", _sessionId);
+                    
+                    var page = await _browserManager.GetOrCreateSessionPageAsync(_sessionId);
+                    await _authenticationService.RefreshXsrfTokenAsync(page);
+                    
+                    // Retry with new token
+                    session = _sessionManager.GetSession(_sessionId);
+                    headers["X-Xsrf-Token"] = session.XsrfToken;
+                    
+                    var retryResponse = await _browserManager.ExecuteFetchRequestAsync(
+                        _sessionId,
+                        url,
+                        method.ToString(),
+                        payload,
+                        headers
+                    );
+
+                    var retryResult = Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(retryResponse);
+                    statusCode = (int)retryResult.status;
+                    body = retryResult.body?.ToString() ?? "";
+                }
+
+                return new KeyValuePair<int, string>(statusCode, body);
+            }
+            catch (Exception ex)
+            {
+                _logger?.LogError(ex, "Error sending authenticated request to {Url} for session {SessionId}", url, _sessionId);
                 return GetErrorResponse(ex.Message);
             }
         }

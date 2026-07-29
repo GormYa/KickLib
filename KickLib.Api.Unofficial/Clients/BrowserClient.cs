@@ -53,6 +53,19 @@ namespace KickLib.Api.Unofficial.Clients
         {
             return _authenticationService.AuthenticateAsync(authenticationSettings);
         }
+        
+        /// <inheritdoc />
+        public async Task RefreshTokensAsync(bool skipIfExists)
+        {
+            if (!string.IsNullOrWhiteSpace(_authenticationService.XsrfToken) && skipIfExists)
+            {
+                return;
+            }
+            
+            await using var browser = await BrowserInitializer.LaunchBrowserAsync(_settings).ConfigureAwait(false);
+            await using var page = await browser.NewPageAsync().ConfigureAwait(false);
+            await _authenticationService.RefreshXsrfTokenAsync(page);
+        }
 
         /// <inheritdoc />
         public async Task<KeyValuePair<int, string>> SendRequestAsync(string url)
@@ -88,7 +101,90 @@ namespace KickLib.Api.Unofficial.Clients
                 return new KeyValuePair<int, string>(200, match.Groups["json"].Value);
             }, new Dictionary<string, object> { { "url", url } }).ConfigureAwait(false);
         }
+        
+        public async Task<KeyValuePair<int, string>> SendRequestAsync(
+            string url,
+            string payload,
+            HttpMethod? method = null)
+        {
+            await using var browser = await BrowserInitializer.LaunchBrowserAsync(_settings).ConfigureAwait(false);
 
+            try
+            {
+                await using var page = await browser.NewPageAsync().ConfigureAwait(false);
+
+                var requestMethod = method?.ToString() ?? (payload is not null ? "POST" : "GET");
+                var body = payload is not null
+                    ? $", body: JSON.stringify({payload})"
+                    : "";
+
+                string response = null;
+                await Policy
+                    .Handle<XsrfMismatchException>()
+                    .RetryAsync(2, async (_, _) =>
+                    {
+                        // Refresh Xsrf token if we get a mismatch
+                        await _authenticationService.RefreshXsrfTokenAsync(page);
+                    })
+                    .ExecuteAsync(async () =>
+                    {
+                        response = await Policy
+                            .Handle<PuppeteerException>()
+                            .RetryAsync(3)
+                            .ExecuteAsync(async () =>
+                            {
+                                // Sometimes Kick doesn't like our requests and we get 'Failed to fetch' exception
+                                // Simple retry is enough to pass through 
+
+                                var responseData = await page.EvaluateFunctionAsync<string>($@"
+                    async () => {{
+                        const response = await fetch('{url}', {{
+                            method: '{requestMethod}',
+                            headers: {{
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json',
+                                'X-Xsrf-Token': '{_authenticationService.XsrfToken}'
+                            }}{body}
+                        }});
+                        return response.text();
+                    }}
+                ").ConfigureAwait(false);
+
+                                if (responseData.Contains("CSRF token mismatch"))
+                                {
+                                    throw new XsrfMismatchException("Something went wrong: CSRF token mismatch");
+                                }
+
+                                return responseData;
+                            });
+                    });
+
+                if (response is null)
+                {
+                    throw new ArgumentException("Couldn't get the response from target page");
+                }
+
+                var parsedResponse = JToken.Parse(response);
+                if (parsedResponse["message"] != null)
+                {
+                    // if root contains 'message' it's most likely error
+                    return new KeyValuePair<int, string>(500, parsedResponse["message"].ToString());
+                }
+
+                // Try to extract status code from the call. It's not always there.
+                var statusCode = int.Parse(parsedResponse["status"]?["code"]?.ToString() ?? "200");
+
+                return new KeyValuePair<int, string>(statusCode, response);
+            }
+            catch (Exception ex)
+            {
+                _logger?.LogError($"Error sending message: {ex.Message}");
+            }
+
+            // At this point we got error, so return empty string with 500.
+            return new KeyValuePair<int, string>(500, string.Empty);
+        }
+        
         /// <inheritdoc />
         public async Task<KeyValuePair<int, string>> SendAuthenticatedRequestAsync(
             string url, 
