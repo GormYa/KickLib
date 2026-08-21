@@ -141,6 +141,7 @@ public class ApiResponseTests : BaseKickLibTests
         ((ChannelResponse)deserializedObject).Stream.CustomTags.Should().NotBeNull();
         ((ChannelResponse)deserializedObject).Stream.CustomTags.Should().HaveCount(2);
         ((ChannelResponse)deserializedObject).ActiveSubscribers.Should().Be(150);
+        ((ChannelResponse)deserializedObject).ActiveGiftedSubscribers.Should().Be(40);
         ((ChannelResponse)deserializedObject).CanceledSubscribers.Should().Be(25);
     }
 

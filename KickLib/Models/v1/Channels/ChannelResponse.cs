@@ -20,11 +20,17 @@ public class ChannelResponse
     public string Slug { get; set; } = string.Empty;
 
     /// <summary>
-    ///     Number of active subscribers on the channel.
+    ///     Number of active subscribers on the channel. Includes both paid and gifted subscriptions.
     /// </summary>
     [JsonProperty(PropertyName = "active_subscribers_count")]
     public int ActiveSubscribers { get; set; }
-    
+
+    /// <summary>
+    ///     Number of active gifted subscribers on the channel.
+    /// </summary>
+    [JsonProperty(PropertyName = "active_gifted_subscribers_count")]
+    public int ActiveGiftedSubscribers { get; set; }
+
     /// <summary>
     ///     Number of canceled subscribers from the channel.
     /// </summary>
