@@ -120,7 +120,7 @@ namespace KickLib.Api.Unofficial.Api
             };
             
             var result = await PostAsync<VideoPlayback>(urlPart, ApiVersion.WebV1, payload);
-            if (result.PlaybackUrl is null)
+            if (result?.PlaybackUrl is null)
             {
                 return result;
             }
