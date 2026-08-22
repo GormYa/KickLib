@@ -1,6 +1,7 @@
 using FluentAssertions;
 using KickLib.Core;
 using KickLib.Models;
+using KickLib.Models.v1.Ads;
 using KickLib.Models.v1.Auth;
 using KickLib.Models.v1.Categories;
 using KickLib.Models.v1.ChannelRewards;
@@ -283,6 +284,41 @@ public class ApiResponseTests : BaseKickLibTests
         deserializedObject.Reward.IsDeleted.Should().BeFalse();
     }
     
+    [Fact]
+    public void CorrectlyDeserialize_AdBreak()
+    {
+        var payload = GetPayload("GetAdBreakResponse");
+
+        var deserializedObject = JsonConvert.DeserializeObject<AdBreak>(payload, SerializerSettings);
+
+        deserializedObject.Should().NotBeNull();
+        deserializedObject!.Id.Should().Be(Guid.Parse("123e4567-e89b-12d3-a456-426614174000"));
+        deserializedObject.RemainingAdBreaks.Should().Be(2);
+    }
+
+    [Fact]
+    public void CorrectlyDeserialize_AdBreakStatus()
+    {
+        var payload = GetPayload("GetAdBreakStatusResponse");
+
+        var deserializedObject = JsonConvert.DeserializeObject<AdBreakStatus>(payload, SerializerSettings);
+
+        deserializedObject.Should().NotBeNull();
+        deserializedObject!.OptedIn.Should().BeTrue();
+        deserializedObject.AdsBlocked.Should().BeFalse();
+        deserializedObject.RemainingAdBreaks.Should().Be(2);
+        deserializedObject.Limits.Max.Should().Be(3);
+        deserializedObject.Limits.PeriodSeconds.Should().Be(3600);
+        deserializedObject.AdBreaks.Should().HaveCount(1);
+
+        var adBreak = deserializedObject.AdBreaks.First();
+        adBreak.Id.Should().Be(Guid.Parse("123e4567-e89b-12d3-a456-426614174000"));
+        adBreak.Status.Should().Be("inserted");
+        adBreak.BreakDurationSeconds.Should().Be(30);
+        adBreak.Source.Should().Be("public_api");
+        adBreak.CreatedAt.Should().Be(DateTimeOffset.Parse("2026-01-02T03:04:05Z"));
+    }
+
     [Fact]
     public void CorrectlyDeserialize_WrapperObject()
     {

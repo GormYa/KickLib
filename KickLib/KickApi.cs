@@ -12,8 +12,11 @@ namespace KickLib;
 public class KickApi : IKickApi
 {
     /// <inheritdoc />
+    public IAds Ads { get; }
+
+    /// <inheritdoc />
     public IAuthorization Authorization { get; }
-    
+
     /// <inheritdoc />
     public ICategories Categories { get; }
     
@@ -53,6 +56,7 @@ public class KickApi : IKickApi
     /// <summary>
     ///     Create a new instance of the KickLib.
     /// </summary>
+    /// <param name="ads">Ads api implementation.</param>
     /// <param name="authorization">Authorization api implementation.</param>
     /// <param name="categories">Category api implementation.</param>
     /// <param name="channels">Channel api implementation.</param>
@@ -67,6 +71,7 @@ public class KickApi : IKickApi
     /// <param name="raw">Raw api implementation.</param>
     /// <param name="settings">API Settings. {(If null, default settings will be used}.</param>
     public KickApi(
+        IAds ads,
         IAuthorization authorization,
         ICategories categories,
         IChat chat,
@@ -84,6 +89,7 @@ public class KickApi : IKickApi
         ApiSettings = settings ?? ApiSettings.Default;
 
         // APIs
+        Ads = ads;
         Authorization = authorization;
         Categories = categories;
         Chat = chat;
@@ -114,6 +120,7 @@ public class KickApi : IKickApi
         var oauthGenerator = new KickOAuthGenerator(httpClientFactory);
         
         return new KickApi(
+            new Ads(apiSettings, oauthGenerator, httpClientFactory, loggerFactory.GetLogger<Ads>()),
             new Authorization(apiSettings, oauthGenerator, httpClientFactory, loggerFactory.GetLogger<Authorization>()),
             new Categories(apiSettings, oauthGenerator, httpClientFactory, loggerFactory.GetLogger<Categories>()),
             new Chat(apiSettings, oauthGenerator, httpClientFactory, loggerFactory.GetLogger<Chat>()),

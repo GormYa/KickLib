@@ -36,6 +36,7 @@ public class DependencyInjectionTests
         var kickApi = KickApi.Create();
         kickApi.Should().NotBeNull();
         kickApi.ApiSettings.Should().NotBeNull();
+        kickApi.Ads.Should().NotBeNull();
         kickApi.Authorization.Should().NotBeNull();
         kickApi.Categories.Should().NotBeNull();
         kickApi.Channels.Should().NotBeNull();

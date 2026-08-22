@@ -83,6 +83,10 @@
       <EmbeddedResource Include="Data\WebhookPayloads\ValidationPayload.json" />
       <None Remove="Data\WebhookPayloads\LivestreamMetadataUpdatedEventPayload.json" />
       <EmbeddedResource Include="Data\WebhookPayloads\LivestreamMetadataUpdatedEventPayload.json" />
+      <None Remove="Data\ApiResponses\GetAdBreakResponse.json" />
+      <EmbeddedResource Include="Data\ApiResponses\GetAdBreakResponse.json" />
+      <None Remove="Data\ApiResponses\GetAdBreakStatusResponse.json" />
+      <EmbeddedResource Include="Data\ApiResponses\GetAdBreakStatusResponse.json" />
     </ItemGroup>
 
 </Project>

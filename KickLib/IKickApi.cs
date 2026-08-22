@@ -8,6 +8,11 @@ namespace KickLib;
 public interface IKickApi
 {
     /// <summary>
+    ///     Ads APIs allow an app to manage ad breaks and ads enrollment for a channel.
+    /// </summary>
+    IAds Ads { get; }
+
+    /// <summary>
     ///     Authorization-related APIs to allow you to interact with OAuth endpoints.
     /// </summary>
     IAuthorization Authorization { get; }

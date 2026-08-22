@@ -30,6 +30,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 .Services
                 .AddScoped<IKickApi, KickApi>()
                 .AddScoped<ApiSettings>(_ => ApiSettings.Default)
+                .AddScoped<IAds, KickLib.Api.Ads>()
                 .AddScoped<IAuthorization, KickLib.Api.Authorization>()
                 .AddScoped<ICategories, KickLib.Api.Categories>()
                 .AddScoped<IChannels, KickLib.Api.Channels>()

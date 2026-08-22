@@ -92,4 +92,20 @@ public static class KickScopes
     ///     View KICKs related information in Kick e.g leaderboards, etc.
     /// </remarks>
     public const string KicksRead = "kicks:read";
+
+    /// <summary>
+    ///     Read ads info scope.
+    /// </summary>
+    /// <remarks>
+    ///     View ads settings and ad breaks for a channel.
+    /// </remarks>
+    public const string AdsRead = "ads:read";
+
+    /// <summary>
+    ///     Manage ads scope.
+    /// </summary>
+    /// <remarks>
+    ///     Manage ads settings and ad breaks for a channel.
+    /// </remarks>
+    public const string AdsWrite = "ads:write";
 }

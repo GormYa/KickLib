@@ -1,0 +1,18 @@
+{
+  "opted_in": true,
+  "ads_blocked": false,
+  "remaining_ad_breaks": 2,
+  "ad_breaks": [
+    {
+      "id": "123e4567-e89b-12d3-a456-426614174000",
+      "status": "inserted",
+      "break_duration_seconds": 30,
+      "created_at": "2026-01-02T03:04:05Z",
+      "source": "public_api"
+    }
+  ],
+  "limits": {
+    "max": 3,
+    "period_seconds": 3600
+  }
+}
