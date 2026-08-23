@@ -106,4 +106,87 @@ public class EventParserTests : BaseKickLibTests
 
         eventInfo.ValidateSender(payload).Should().BeTrue();
     }
+
+    [Fact]
+    public void WebhookEventInfo_ValidateKickSignature_WithTamperedPayload_ReturnsFalse()
+    {
+        var payload = GetPayload("ValidationPayload") + " ";
+
+        var eventInfo = CreateValidEventInfo();
+
+        eventInfo.ValidateSender(payload).Should().BeFalse();
+    }
+
+    [Fact]
+    public void WebhookEventInfo_ValidateKickSignature_WithWrongMessageId_ReturnsFalse()
+    {
+        var payload = GetPayload("ValidationPayload");
+
+        var eventInfo = CreateValidEventInfo(messageId: "01JQR5KV0QC94HMETWYNBWRW4X");
+
+        eventInfo.ValidateSender(payload).Should().BeFalse();
+    }
+
+    [Fact]
+    public void WebhookEventInfo_ValidateKickSignature_WithWrongTimestamp_ReturnsFalse()
+    {
+        var payload = GetPayload("ValidationPayload");
+
+        var eventInfo = CreateValidEventInfo(timestamp: "2025-04-01T07:56:20Z");
+
+        eventInfo.ValidateSender(payload).Should().BeFalse();
+    }
+
+    [Fact]
+    public void WebhookEventInfo_ValidateKickSignature_WithMalformedSignature_ReturnsFalse()
+    {
+        var payload = GetPayload("ValidationPayload");
+
+        var eventInfo = CreateValidEventInfo(signature: "not-a-valid-base64-signature!!!");
+
+        eventInfo.ValidateSender(payload).Should().BeFalse();
+    }
+
+    [Fact]
+    public void WebhookEventInfo_ValidateKickSignature_WithWrongSignature_ReturnsFalse()
+    {
+        var payload = GetPayload("ValidationPayload");
+
+        // Valid base64, but not a signature for this payload.
+        var eventInfo = CreateValidEventInfo(signature: Convert.ToBase64String(new byte[256]));
+
+        eventInfo.ValidateSender(payload).Should().BeFalse();
+    }
+
+    [Fact]
+    public void WebhookEventInfo_ValidateKickSignature_WithInvalidCustomPublicKey_Throws()
+    {
+        var payload = GetPayload("ValidationPayload");
+
+        var eventInfo = CreateValidEventInfo();
+
+        var act = () => eventInfo.ValidateSender(payload, "not-a-valid-pem-key");
+
+        act.Should().Throw<Exception>();
+    }
+
+    private static WebhookEventInfo CreateValidEventInfo(
+        string? timestamp = null,
+        string? signature = null,
+        string? messageId = null)
+    {
+        const string defaultSignature = "fpZCxfE8lojfMhDPvSpmEjHbJH4+6OFVSLStKgiTxH7QXQw/M3sdWWl0o/pxBz0vA9xXP8x3l+z7WNkT3C+6K7MkEZBtvv+88IAgWyJ2uTLKJtuFn5FIIQKTv1tAqOeFIp1A56DJR9eJ/yzG+flj9RwSNcvMPXBHS3X5jisBiKhYrqUUAW6HYuYKMq5cTcxb1IX0hyN5jEkFv2BuWAIlriyVztdXBX1aHENBxCSf1qbFzQ26VCaZNCOGPpLS+4kHzuU8Zkju+o4nAUm+DIC8c1CjYfPIwu/tZb2HPGklXt1ZMQXpnP+F/Oo+NaW8Z0fBl1ZG8wanIVjPClkoDR4QZQ==";
+        const string defaultSubscriptionId = "01JQ79DGGK8C9117GJN8EHCYGG";
+        const string defaultMessageId = "01JQR5KV0QC94HMETWYNBWRW4Z";
+        const string defaultTimestamp = "2025-04-01T07:56:19Z";
+
+        return new WebhookEventInfo(
+            WebhookEventTypes.LivestreamStatusUpdated,
+            1,
+            timestamp ?? defaultTimestamp,
+            signature ?? defaultSignature,
+            defaultSubscriptionId,
+            messageId ?? defaultMessageId
+        );
+    }
 }

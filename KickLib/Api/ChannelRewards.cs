@@ -64,21 +64,6 @@ public class ChannelRewards : ApiBase, IChannelRewards
     }
 
     /// <inheritdoc />
-    public Task<Result<ChannelReward>> CreateChannelRewardAsync(
-        string title,
-        int cost,
-        string? accessToken = null,
-        CancellationToken cancellationToken = default)
-    {
-        return CreateChannelRewardAsync(
-            title, 
-            cost, 
-            isEnabled: true, 
-            accessToken: accessToken, 
-            cancellationToken: cancellationToken);
-    }
-    
-    /// <inheritdoc />
     public async Task<Result<ChannelReward>> CreateChannelRewardAsync(
         CreateChannelRewardRequest request,
         string? accessToken = null,

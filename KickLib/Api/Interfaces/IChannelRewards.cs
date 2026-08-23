@@ -38,24 +38,7 @@ public interface IChannelRewards
         CancellationToken cancellationToken = default);
 
     /// <summary>
-    ///     Creates a channel reward in the broadcaster's channel. 
-    ///     A maximum of 15 rewards can be created, including both enabled and disabled rewards.
-    /// </summary>
-    /// <remarks>
-    ///     Required scope: channel:rewards:write
-    /// </remarks>
-    /// <param name="cost">The cost of the reward in channel points (must be 1 or greater).</param>
-    /// <param name="title">The title of the reward (50 characters max).</param>
-    /// <param name="accessToken">Access token to be used for this request. If null, token from <see cref="ApiSettings"/> will be used.</param>
-    /// <param name="cancellationToken">The cancellation token to cancel operation.</param>
-    Task<Result<ChannelReward>> CreateChannelRewardAsync(
-        string title,
-        int cost,
-        string? accessToken = null,
-        CancellationToken cancellationToken = default);
-
-    /// <summary>
-    ///     Creates a channel reward in the broadcaster's channel. 
+    ///     Creates a channel reward in the broadcaster's channel.
     ///     A maximum of 15 rewards can be created, including both enabled and disabled rewards.
     /// </summary>
     /// <remarks>
@@ -73,7 +56,7 @@ public interface IChannelRewards
     Task<Result<ChannelReward>> CreateChannelRewardAsync(
         string title,
         int cost,
-        bool isEnabled,
+        bool isEnabled = true,
         bool isUserInputRequired = false,
         bool shouldRedemptionsSkipQueue = false,
         string? backgroundColor = null,
